@@ -1,0 +1,10 @@
+@import "tailwindcss";
+
+h1,h2,h3,button{
+    font-family: 'Aboreto', sans-serif;
+}
+
+
+p,a,span,li{
+    font-family: 'Darker Grotesque', sans-serif;
+}
