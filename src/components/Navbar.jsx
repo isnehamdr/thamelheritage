@@ -135,7 +135,7 @@ const Navbar = () => {
 
           <a
             href="#"
-            className="rounded-full border border-[#b98b3e]/70 px-6 py-2.5 uppercase tracking-[2px] text-xs text-[#f3e6bd] hover:bg-[#b98b3e] hover:text-[#0b0b0d] hover:border-[#b98b3e] transition-all duration-300"
+            className=" px-6 py-2.5 uppercase tracking-[2px] text-lg font-medium text-[#e8dcb8] hover:bg-[#b98b3e] hover:text-[#0b0b0d] hover:border-[#b98b3e] transition-all duration-300"
           >
             Book Now
           </a>
@@ -205,7 +205,7 @@ const Navbar = () => {
 
           <a
             href="#"
-            className="block rounded-full bg-[#b98b3e] py-3 text-center uppercase tracking-[2px] text-xs text-[#0b0b0d] hover:bg-[#c9a24a] transition-colors"
+            className="block rounded-full bg-[#b98b3e] py-3 text-center uppercase tracking-[2px] text-md text-[#0b0b0d] hover:bg-[#c9a24a] transition-colors"
           >
             Book Now
           </a>
