@@ -52,18 +52,43 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Close mobile menu on escape key
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === "Escape") setMobileOpen(false);
+    };
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
+  }, []);
+
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [mobileOpen]);
+
   const navLink =
-    "uppercase text-[13px] xl:text-xl tracking-[2px] font-medium text-[#f3e6bd] hover:text-[#c9a24a] transition-colors duration-300";
+    "uppercase text-[13px] xl:text-xl tracking-[2px] font-medium transition-colors duration-300";
+  
+  const navLinkColor = isScrolled 
+    ? "text-black hover:text-[#c9a24a]" 
+    : "text-[#f3e6bd] hover:text-[#c9a24a]";
 
   return (
     <header
       className={`
-        fixed top-0 left-0 w-full z-50 font-sans
+        fixed top-0 left-0 w-full z-50 
         transition-all duration-500 ease-in-out
         ${showNavbar ? "translate-y-0" : "-translate-y-full"}
         ${
           isScrolled
-            ? "bg-[#0b0b0d]/90 backdrop-blur-md shadow-[0_2px_20px_rgba(0,0,0,0.4)]"
+            ? "bg-white shadow-[0_2px_20px_rgba(0,0,0,0.1)]"
             : "bg-transparent"
         }
       `}
@@ -80,7 +105,7 @@ const Navbar = () => {
         {/* Left */}
         <div className="flex items-center gap-8 xl:gap-10">
           {leftLinks.map((item) => (
-            <a key={item.name} href={item.href} className={navLink}>
+            <a key={item.name} href={item.href} className={`${navLink} ${navLinkColor}`}>
               {item.name}
             </a>
           ))}
@@ -90,9 +115,9 @@ const Navbar = () => {
         <div className="flex justify-center px-8">
           <a href="#" className="flex flex-col items-center leading-none">
             <img
-              src="/images/logo.png"
+              src={isScrolled ? "/images/logo.png" : "/images/logo.png"}
               alt="Thamel Heritage"
-              className="h-28 w-auto object-cover"
+              className="h-20 w-auto object-contain"
             />
           </a>
         </div>
@@ -104,10 +129,10 @@ const Navbar = () => {
             onMouseEnter={() => setPagesOpen(true)}
             onMouseLeave={() => setPagesOpen(false)}
           >
-            <button className={`${navLink} flex items-center gap-1.5 bg-transparent`}>
+            <button className={`${navLink} ${navLinkColor} flex items-center text-lg gap-1.5 bg-transparent`}>
               Explore
               <ChevronDown
-                size={16}
+                size={14}
                 className={`transition-transform duration-300 ${
                   pagesOpen ? "rotate-180" : ""
                 }`}
@@ -115,7 +140,9 @@ const Navbar = () => {
             </button>
 
             <div
-              className={`absolute right-0 mt-5 w-56 rounded-lg bg-[#151215] border border-[#b98b3e]/20 shadow-2xl transition-all duration-300 ${
+              className={`absolute right-0 mt-5 w-56 rounded-lg ${
+                isScrolled ? "bg-white" : "bg-[#151215]"
+              } border border-[#b98b3e]/20 shadow-2xl transition-all duration-300 ${
                 pagesOpen
                   ? "opacity-100 visible translate-y-0"
                   : "opacity-0 invisible -translate-y-3"
@@ -125,7 +152,11 @@ const Navbar = () => {
                 <a
                   key={page.name}
                   href={page.href}
-                  className="block px-6 py-3 uppercase text-xs tracking-wider text-[#e8dcb8] hover:bg-[#b98b3e]/10 hover:text-[#c9a24a] transition-colors"
+                  className={`block px-6 py-3 uppercase text-xs tracking-wider transition-colors ${
+                    isScrolled 
+                      ? "text-black hover:bg-[#b98b3e]/10 hover:text-[#c9a24a]" 
+                      : "text-[#e8dcb8] hover:bg-[#b98b3e]/10 hover:text-[#c9a24a]"
+                  }`}
                 >
                   {page.name}
                 </a>
@@ -135,7 +166,11 @@ const Navbar = () => {
 
           <a
             href="#"
-            className=" px-6 py-2.5 uppercase tracking-[2px] text-lg font-medium text-[#e8dcb8] hover:bg-[#b98b3e] hover:text-[#0b0b0d] hover:border-[#b98b3e] transition-all duration-300"
+            className={`px-6 py-2.5 uppercase tracking-[2px] text-lg xl:text-xl font-medium transition-all duration-300 ${
+              isScrolled
+                ? "text-black hover:bg-[#b98b3e] hover:text-white"
+                : "text-[#e8dcb8] hover:bg-[#b98b3e] hover:text-[#0b0b0d]"
+            }`}
           >
             Book Now
           </a>
@@ -145,70 +180,97 @@ const Navbar = () => {
       {/* ================= MOBILE ================= */}
       <nav className="lg:hidden flex items-center justify-between h-20 px-5">
         <a href="#">
-          <img src="/images/logo2.png" alt="Thamel Heritage" className="h-12 object-contain" />
+          <img 
+            src={isScrolled ? "/images/logo.png" : "/images/logo.png"} 
+            alt="Thamel Heritage" 
+            className="h-12 w-auto object-contain" 
+          />
         </a>
 
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="text-[#f3e6bd]"
+          className={`relative z-[60] transition-colors duration-300 ${
+            isScrolled ? "text-black" : "text-[#f3e6bd]"
+          }`}
           aria-label={mobileOpen ? "Close menu" : "Open menu"}
         >
           {mobileOpen ? <X size={28} /> : <Menu size={28} />}
         </button>
       </nav>
 
-      {/* ================= MOBILE MENU ================= */}
+      {/* ================= MOBILE MENU (Slides from right) ================= */}
       <div
-        className={`lg:hidden overflow-hidden transition-all duration-500 ${
-          mobileOpen ? "max-h-[700px]" : "max-h-0"
-        }`}
+        className={`
+          lg:hidden fixed top-0 right-0 h-full w-full bg-black
+          transform transition-transform duration-500 ease-in-out z-40
+          ${mobileOpen ? "translate-x-0" : "translate-x-full"}
+        `}
       >
-        <div className="bg-[#0b0b0d]/98 backdrop-blur-lg px-6 py-6 space-y-5 border-t border-[#b98b3e]/15">
-          {leftLinks.map((item) => (
-            <a key={item.name} href={item.href} className={`${navLink} block`}>
-              {item.name}
-            </a>
-          ))}
+        <div className="flex flex-col h-full pt-24 px-6 pb-8 overflow-y-auto">
+          <div className="flex flex-col space-y-6">
+            {leftLinks.map((item) => (
+              <a
+                key={item.name}
+                href={item.href}
+                className="uppercase text-xl tracking-[2px] font-medium text-[#f3e6bd] hover:text-[#c9a24a] transition-colors duration-300 block"
+                onClick={() => setMobileOpen(false)}
+              >
+                {item.name}
+              </a>
+            ))}
 
-          <div>
-            <button
-              onClick={() => setPagesOpen(!pagesOpen)}
-              className={`${navLink} flex justify-between items-center w-full`}
-            >
-              Explore
-              <ChevronDown
-                size={16}
-                className={`transition-transform duration-300 ${
-                  pagesOpen ? "rotate-180" : ""
+            <div>
+              <button
+                onClick={() => setPagesOpen(!pagesOpen)}
+                className="uppercase text-xl tracking-[2px] font-medium text-[#f3e6bd] hover:text-[#c9a24a] transition-colors duration-300 flex justify-between items-center w-full"
+              >
+                Explore
+                <ChevronDown
+                  size={20}
+                  className={`transition-transform duration-300 ${
+                    pagesOpen ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+
+              <div
+                className={`overflow-hidden transition-all duration-300 ${
+                  pagesOpen ? "max-h-96 mt-4" : "max-h-0"
                 }`}
-              />
-            </button>
-
-            <div
-              className={`overflow-hidden transition-all duration-300 ${
-                pagesOpen ? "max-h-96 mt-4" : "max-h-0"
-              }`}
-            >
-              <div className="ml-4 border-l border-[#b98b3e]/30 pl-4 space-y-4">
-                {pageLinks.map((page) => (
-                  <a
-                    key={page.name}
-                    href={page.href}
-                    className="block uppercase text-xs tracking-wider text-[#cfc3a0] hover:text-[#c9a24a]"
-                  >
-                    {page.name}
-                  </a>
-                ))}
+              >
+                <div className="ml-4 border-l border-[#b98b3e]/30 pl-4 space-y-4">
+                  {pageLinks.map((page) => (
+                    <a
+                      key={page.name}
+                      href={page.href}
+                      className="block uppercase text-sm tracking-wider text-[#cfc3a0] hover:text-[#c9a24a] transition-colors"
+                      onClick={() => {
+                        setMobileOpen(false);
+                        setPagesOpen(false);
+                      }}
+                    >
+                      {page.name}
+                    </a>
+                  ))}
+                </div>
               </div>
             </div>
+
+            <a
+              href="#"
+              className="block rounded-full bg-[#b98b3e] py-3.5 text-center uppercase tracking-[2px] text-base font-medium text-[#0b0b0d] hover:bg-[#c9a24a] transition-colors mt-4"
+              onClick={() => setMobileOpen(false)}
+            >
+              Book Now
+            </a>
           </div>
 
-          <a
-            href="#"
-            className="block rounded-full bg-[#b98b3e] py-3 text-center uppercase tracking-[2px] text-md text-[#0b0b0d] hover:bg-[#c9a24a] transition-colors"
-          >
-            Book Now
-          </a>
+          {/* Optional: Add bottom spacing or extra content */}
+          <div className="mt-auto pt-8 border-t border-[#b98b3e]/10">
+            <p className="text-xs text-[#f3e6bd]/40 text-center tracking-wider">
+              Thamel Heritage
+            </p>
+          </div>
         </div>
       </div>
     </header>
